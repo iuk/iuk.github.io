@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="ICP SVD 解法 整体流程 有两组点，已经配好对，分别为：$p_i, p’_i$，每个点是一个列向量。其中：$p_i$ 为背景点云，$p’_i$ 为前景点云，求前景点云到背景点云的变换。 求中心，得到$p_c, p’_c$ 去中心，得到$q_i, q’_i$ 求旋转 R，依据优化公式： R^*&#x3D;\arg \min \limits_{R} \frac{1}{2} \sum_i||q_i - Rq">
+<meta name="description" content="ICP SVD 解法 整体流程 有两组点，已经配好对，分别为：$p_i, p’_i$，每个点是一个列向量。其中：$p_i$ 为背景点云，$p’_i$ 为前景点云，求前景点云到背景点云的变换。 求中心，得到$p_c, p’_c$ 去中心，得到$q_i, q’_i$ 求旋转 R，依据优化公式：$$R^*&#x3D;\arg \min \limits_{R} \frac{1}{2} \sum_i||q_i - R">
 <meta property="og:type" content="article">
 <meta property="og:title" content="icp_svd_解法">
 <meta property="og:url" content="http://yoursite.com/2020/03/10/icp-svd-%E8%A7%A3%E6%B3%95/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="ICP SVD 解法 整体流程 有两组点，已经配好对，分别为：$p_i, p’_i$，每个点是一个列向量。其中：$p_i$ 为背景点云，$p’_i$ 为前景点云，求前景点云到背景点云的变换。 求中心，得到$p_c, p’_c$ 去中心，得到$q_i, q’_i$ 求旋转 R，依据优化公式： R^*&#x3D;\arg \min \limits_{R} \frac{1}{2} \sum_i||q_i - Rq">
+<meta property="og:description" content="ICP SVD 解法 整体流程 有两组点，已经配好对，分别为：$p_i, p’_i$，每个点是一个列向量。其中：$p_i$ 为背景点云，$p’_i$ 为前景点云，求前景点云到背景点云的变换。 求中心，得到$p_c, p’_c$ 去中心，得到$q_i, q’_i$ 求旋转 R，依据优化公式：$$R^*&#x3D;\arg \min \limits_{R} \frac{1}{2} \sum_i||q_i - R">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-03-10T10:34:08.000Z">
-<meta property="article:modified_time" content="2020-03-10T15:41:07.863Z">
+<meta property="article:modified_time" content="2020-03-10T10:58:02.634Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 
@@ -304,72 +304,45 @@
 <li>有两组点，已经配好对，分别为：$p_i, p’_i$，每个点是一个列向量。<br>其中：$p_i$ 为背景点云，$p’_i$ 为前景点云，求前景点云到背景点云的变换。</li>
 <li>求中心，得到$p_c, p’_c$</li>
 <li>去中心，得到$q_i, q’_i$</li>
-<li>求旋转 R，依据优化公式：<script type="math/tex; mode=display">
-R^*=\arg \min \limits_{R} \frac{1}{2} \sum_i||q_i - Rq'_i||</script></li>
-<li>求平移 t，依据公式：<script type="math/tex; mode=display">
-p_c = Rp'_c+t</script></li>
+<li>求旋转 R，依据优化公式：<br>$$<br>R^*=\arg \min \limits_{R} \frac{1}{2} \sum_i||q_i - Rq’_i||<br>$$</li>
+<li>求平移 t，依据公式：<br>$$<br>p_c = Rp’_c+t<br>$$</li>
 </ol>
 <h3 id="优化结"><a href="#优化结" class="headerlink" title="优化结"></a>优化结</h3><ol>
-<li><p>计算3x3 矩阵 H（如果是三维点云）</p>
-<script type="math/tex; mode=display">
-H=\sum_i^n q'_i q_i^T</script></li>
-<li><p>SVD 分解 H</p>
-<script type="math/tex; mode=display">
-H=U\Sigma V^T</script><p>其中 U V 均为 3x3 正交矩阵</p>
+<li><p>计算3x3 矩阵 H（如果是三维点云）<br>$$<br>H=\sum_i^n q’_i q_i^T<br>$$</p>
 </li>
-<li><p>得到最优 $R^*$：</p>
-<script type="math/tex; mode=display">
-R^* = VU^T</script></li>
+<li><p>SVD 分解 H<br>$$<br>H=U\Sigma V^T<br>$$<br>其中 U V 均为 3x3 正交矩阵</p>
+</li>
+<li><p>得到最优 $R^<em>$：<br>$$<br>R^</em> = VU^T<br>$$</p>
+</li>
 </ol>
 <h3 id="优化推导"><a href="#优化推导" class="headerlink" title="优化推导"></a>优化推导</h3><ol>
 <li>展开</li>
 </ol>
-<script type="math/tex; mode=display">
-\begin{aligned}
-R^*&=\arg \min \limits_{R} \frac{1}{2} \sum_i ||q_i - Rq'_i|| \\
-&=\arg \min \limits_{R} \frac{1}{2} \sum_i (q_i - Rq'_i)^T (q_i - Rq'_i) \\
-&=\arg \min \limits_{R} \frac{1}{2} \sum_i q_i^Tq_i - 2q_i^TRq'_i+{q'_i}^TR^TRq'_i \\
-&=\arg \min \limits_{R} \frac{1}{2} \sum_i q_i^Tq_i - 2q_i^TRq'_i+{q'_i}^Tq'_i \\
-\end{aligned}</script><p>用到的理论：</p>
+<p>$$<br>\begin{aligned}<br>R^*&amp;=\arg \min \limits_{R} \frac{1}{2} \sum_i ||q_i - Rq’<em>i|| \<br>&amp;=\arg \min \limits</em>{R} \frac{1}{2} \sum_i (q_i - Rq’<em>i)^T (q_i - Rq’_i) \<br>&amp;=\arg \min \limits</em>{R} \frac{1}{2} \sum_i q_i^Tq_i - 2q_i^TRq’<em>i+{q’_i}^TR^TRq’_i \<br>&amp;=\arg \min \limits</em>{R} \frac{1}{2} \sum_i q_i^Tq_i - 2q_i^TRq’_i+{q’_i}^Tq’_i \<br>\end{aligned}<br>$$</p>
+<p>用到的理论：</p>
 <ul>
 <li>R 为正交矩阵</li>
 </ul>
-<ol>
-<li><p>去除与$R^*$ 无关项，优化问题等价于：</p>
-<script type="math/tex; mode=display">
-R^*=\arg \min \limits_{R} \sum_i -q_i^TRq'_i</script></li>
+<ol start="2">
+<li><p>去除与$R^<em>$ 无关项，优化问题等价于：<br>$$<br>R^</em>=\arg \min \limits_{R} \sum_i -q_i^TRq’_i<br>$$</p>
+</li>
 <li><p>使用迹</p>
 </li>
 </ol>
-<script type="math/tex; mode=display">\begin{aligned}
-R^*
-&=\arg \min \limits_{R} \sum_i -q_i^TRq'_i \\
-&=\arg \min \limits_{R} \sum_i -tr(q_i^TRq'_i) \\
-&=\arg \min \limits_{R} \sum_i -tr(Rq'_iq_i^T) \\
-&=\arg \max \limits_{R} \sum_i tr(Rq'_iq_i^T) \\
-&=\arg \max \limits_{R} tr(\sum_i Rq'_iq_i^T) \\
-&=\arg \max \limits_{R} tr(R\sum_i q'_iq_i^T) \\
-\end{aligned}</script><p>用到的理论：</p>
+<p>$$\begin{aligned}<br>R^*<br>&amp;=\arg \min \limits_{R} \sum_i -q_i^TRq’<em>i \<br>&amp;=\arg \min \limits</em>{R} \sum_i -tr(q_i^TRq’<em>i) \<br>&amp;=\arg \min \limits</em>{R} \sum_i -tr(Rq’<em>iq_i^T) \<br>&amp;=\arg \max \limits</em>{R} \sum_i tr(Rq’<em>iq_i^T) \<br>&amp;=\arg \max \limits</em>{R} tr(\sum_i Rq’<em>iq_i^T) \<br>&amp;=\arg \max \limits</em>{R} tr(R\sum_i q’_iq_i^T) \<br>\end{aligned}$$</p>
+<p>用到的理论：</p>
 <ul>
 <li>$tr(AB)=tr(BA)$</li>
 <li>$tr(A+B)=tr(A)+tr(B)$</li>
 </ul>
-<ol>
-<li><p>使用 3x3 H 矩阵化简：</p>
-<script type="math/tex; mode=display">
-R^*=\arg \max \limits_{R} tr(RH)</script><p>现在的问题就是，找到一个R，使RH的迹最大。</p>
+<ol start="4">
+<li><p>使用 3x3 H 矩阵化简：<br>$$<br>R^*=\arg \max \limits_{R} tr(RH)<br>$$<br>现在的问题就是，找到一个R，使RH的迹最大。</p>
 </li>
-<li><p>使用辅助旋转矩阵 B：<br>上述问题等价于</p>
-<script type="math/tex; mode=display">
-tr(R^*H) \geq tr(BR^*H)</script><p>B 为一个正交矩阵。</p>
+<li><p>使用辅助旋转矩阵 B：<br>上述问题等价于<br>$$<br>tr(R^<em>H) \geq tr(BR^</em>H)<br>$$<br>B 为一个正交矩阵。</p>
 </li>
-<li><p>有如下理论：</p>
-<script type="math/tex; mode=display">
-tr(AA^T)≥tr(BAA^T),(BB^T=I)</script><p>（可由柯西不等式证明）<br>则问题转化为，求一个$R^<em>$，使$R^</em>H$可以表示为$AA^T$的形式</p>
+<li><p>有如下理论：<br>$$<br>tr(AA^T)≥tr(BAA^T),(BB^T=I)<br>$$<br>（可由柯西不等式证明）<br>则问题转化为，求一个$R^<em>$，使$R^</em>H$可以表示为$AA^T$的形式</p>
 </li>
-<li><p>SVD 分解H</p>
-<script type="math/tex; mode=display">
-H=U\Sigma V^T</script><p>当 $R^<em>=VU^T$ 时，$R^</em>H=VΣV^T$<br>令 $A=VΣ^\frac{1}{2}$<br>有 $R^<em>H=AA^T$<br>因此优化结果为 $R^</em>=VU^T$。</p>
+<li><p>SVD 分解H<br>$$<br>H=U\Sigma V^T<br>$$<br>当 $R^<em>=VU^T$ 时，$R^<em>H=VΣV^T$<br>令 $A=VΣ^\frac{1}{2}$<br>有 $R^</em>H=AA^T$<br>因此优化结果为 $R^</em>=VU^T$。</p>
 </li>
 </ol>
 <h3 id="相关证明"><a href="#相关证明" class="headerlink" title="相关证明"></a>相关证明</h3><p><a href="https://blog.csdn.net/zhouyelihua/article/details/77807541" target="_blank" rel="noopener">https://blog.csdn.net/zhouyelihua/article/details/77807541</a></p>
@@ -666,7 +639,24 @@ H=U\Sigma V^T</script><p>当 $R^<em>=VU^T$ 时，$R^</em>H=VΣV^T$<br>令 $A=VΣ
   
 
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
 
 
 
@@ -719,26 +709,6 @@ H=U\Sigma V^T</script><p>当 $R^<em>=VU^T$ 时，$R^</em>H=VΣV^T$<br>令 $A=VΣ
   
 
   
-  
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        tex2jax: {
-          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
-          processEscapes: true,
-          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-        }
-      });
-    </script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for (i=0; i < all.length; i += 1) {
-          all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-      });
-    </script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
